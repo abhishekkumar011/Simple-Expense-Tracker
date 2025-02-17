@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function Home() {
   const [date, setDate] = useState("");
@@ -19,21 +20,32 @@ export default function Home() {
   // Add a new expense
   const addExpense = () => {
     if (
-      amount.trim() !== "" &&
-      description.trim() !== "" &&
-      date.trim() !== ""
+      amount.trim() === "" ||
+      description.trim() === "" ||
+      date.trim() === ""
     ) {
-      const newExpense = { amount: parseFloat(amount), description, date };
-      setExpenses([...expenses, newExpense]);
-      setDate("");
-      setAmount("");
-      setDescription("");
+      toast.error("Please fill in all fields before adding an expense.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+      return;
     }
+
+    const newExpense = { amount: parseFloat(amount), description, date };
+    setExpenses([...expenses, newExpense]);
+    setDate("");
+    setAmount("");
+    setDescription("");
+    toast.success("Expense added successfully", {
+      position: "top-right",
+      autoClose: 3000,
+    });
   };
 
   const deleteExpense = (index) => {
     //In javaScript _ (underscore) is just a variable name. it is a convention used to indicate that the variable is not needed.
     setExpenses(expenses.filter((_, i) => i !== index));
+    toast.info("Expense deleted.", { position: "top-right", autoClose: 2000 });
   };
 
   // Calculate total expenses
@@ -98,6 +110,7 @@ export default function Home() {
       <h2 className="text-xl font-semibold mt-4 text-center font-sans">
         Total : ₹{totalAmount.toFixed(2)}
       </h2>
+      <ToastContainer />
     </div>
   );
 }
