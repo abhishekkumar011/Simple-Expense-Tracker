@@ -1,11 +1,20 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [date, setDate] = useState("");
   const [amount, setAmount] = useState("");
   const [expenses, setExpenses] = useState([]);
   const [description, setDescription] = useState("");
+
+  useEffect(() => {
+    setExpenses(JSON.parse(localStorage.getItem("expenses")) || []);
+  }, []);
+
+  //Save expenses to local storage
+  useEffect(() => {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+  }, [expenses]);
 
   // Add a new expense
   const addExpense = () => {
@@ -20,6 +29,11 @@ export default function Home() {
       setAmount("");
       setDescription("");
     }
+  };
+
+  const deleteExpense = (index) => {
+    //In javaScript _ (underscore) is just a variable name. it is a convention used to indicate that the variable is not needed.
+    setExpenses(expenses.filter((_, i) => i !== index));
   };
 
   // Calculate total expenses
@@ -72,7 +86,10 @@ export default function Home() {
             <span>
               {expense.date} - {expense.description} - ₹{expense.amount}
             </span>
-            <button className="bg-red-500 text-white px-2 py-1 rounded-md">
+            <button
+              className="bg-red-500 text-white px-2 py-1 rounded-md"
+              onClick={() => deleteExpense(index)}
+            >
               Delete
             </button>
           </li>
